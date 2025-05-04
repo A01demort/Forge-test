@@ -63,6 +63,7 @@ RUN git clone https://github.com/lllyasviel/stable-diffusion-webui-forge.git && 
 EXPOSE 7860
 EXPOSE 8888
 
+
 # 병렬 실행: Jupyter + WebUI 실행
 CMD bash -c "\
 jupyter lab --ip=0.0.0.0 --port=8888 --allow-root \
