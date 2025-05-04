@@ -54,11 +54,10 @@ c.NotebookApp.password = ''\n\
 c.NotebookApp.terminado_settings = {'shell_command': ['/bin/bash']}" \
 > /root/.jupyter/jupyter_notebook_config.py
 
-# Forge WebUI 설치 및 업데이트
+# Forge WebUI 설치
 WORKDIR /workspace
-RUN git clone https://github.com/lllyasviel/stable-diffusion-webui-forge.git && \
-    cd stable-diffusion-webui-forge && \
-    bash update.sh
+RUN git clone https://github.com/lllyasviel/stable-diffusion-webui-forge.git
+
 
 # 포트 오픈
 EXPOSE 7860
