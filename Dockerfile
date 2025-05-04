@@ -3,7 +3,7 @@ FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu20.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_CACHE_DIR=/workspace/.cache/pip
 
-# 필수 시스템 패키지 설치
+# 필수 패키지 설치
 RUN apt-get update && apt-get install -y \
     git wget curl ffmpeg libgl1 \
     build-essential libssl-dev zlib1g-dev libbz2-dev \
@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y \
     libncursesw5-dev xz-utils tk-dev libffi-dev \
     liblzma-dev software-properties-common \
     locales sudo tzdata xterm nano \
-    nodejs npm && \
+    nodejs npm net-tools && \
     apt-get clean
 
-# 정확한 Python 3.10.6 설치
+# Python 3.10.6 설치
 WORKDIR /tmp
 RUN wget https://www.python.org/ftp/python/3.10.6/Python-3.10.6.tgz && \
     tar xzf Python-3.10.6.tgz && cd Python-3.10.6 && \
@@ -26,7 +26,7 @@ RUN wget https://www.python.org/ftp/python/3.10.6/Python-3.10.6.tgz && \
     ln -sf /usr/local/bin/pip3.10 /usr/local/bin/pip && \
     cd / && rm -rf /tmp/*
 
-# 최신 Node.js 18 재설치
+# Node.js 18 설치
 RUN apt-get remove -y nodejs npm && \
     curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
@@ -36,14 +36,13 @@ RUN apt-get remove -y nodejs npm && \
 WORKDIR /workspace
 RUN mkdir -p /workspace && chmod -R 777 /workspace && chown -R root:root /workspace
 
-# PyTorch 2.3.1 + xformers (Forge 권장 환경)
+# PyTorch + xformers + 기타 패키지
 RUN pip install --upgrade pip && \
     pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121 && \
     pip install xformers==0.0.31.dev1030 && \
     pip install pydantic==1.10.13 rich ultralytics opencv-python-headless numpy
 
-
-# JupyterLab 설치 및 설정
+# JupyterLab 설치
 RUN pip install --force-reinstall jupyterlab==3.6.6 jupyter-server==1.23.6 && \
     mkdir -p /root/.jupyter && \
     echo "c.NotebookApp.allow_origin = '*'\n\
@@ -58,14 +57,11 @@ c.NotebookApp.terminado_settings = {'shell_command': ['/bin/bash']}" \
 WORKDIR /workspace
 RUN git clone https://github.com/lllyasviel/stable-diffusion-webui-forge.git
 
+# root 우회 및 WebUI 자동 실행 스크립트 추가
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-# 포트 오픈
 EXPOSE 7860
 EXPOSE 8888
 
-# 병렬 실행: Jupyter + WebUI 실행
-CMD bash -c "\
-jupyter lab --ip=0.0.0.0 --port=8888 --allow-root \
---ServerApp.token='' --ServerApp.password='' & \
-cd /workspace/stable-diffusion-webui-forge && bash webui.sh --listen --port 7860 & \
-wait"
+CMD ["/entrypoint.sh"]
