@@ -39,8 +39,9 @@ RUN mkdir -p /workspace && chmod -R 777 /workspace && chown -R root:root /worksp
 # PyTorch 2.3.1 + xformers (Forge 권장 환경)
 RUN pip install --upgrade pip && \
     pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121 && \
-    pip install xformers==0.0.35 --extra-index-url https://download.pytorch.org/whl/cu121 && \
+    pip install xformers==0.0.31.dev1030 && \
     pip install pydantic==1.10.13 rich ultralytics opencv-python-headless numpy
+
 
 # JupyterLab 설치 및 설정
 RUN pip install --force-reinstall jupyterlab==3.6.6 jupyter-server==1.23.6 && \
