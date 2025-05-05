@@ -35,5 +35,5 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: a01demort/forge-test:v1.0.2
+          tags: a01demort/forge-test:v1.0.3
 
