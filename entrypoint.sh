@@ -16,9 +16,9 @@ sed -i 's/^\s*echo\s\+-e\s\+"\\?[*A-Za-z0-9_[:space:]]*root[[:space:]]*[^"]*"$/#
 sed -i 's/^\s*printf\s\+.*root.*abort.*$/#&/g' webui.sh
 sed -i 's/^\s*exit\s\+1/#&/g' webui.sh
 
-# 🔄 JupyterLab 백그라운드 실행
+# ✅ JupyterLab 실행 (root 허용)
 echo "📚 JupyterLab을 포트 8888에서 백그라운드로 실행합니다..."
-jupyter lab --ip=0.0.0.0 --port=8888 --no-browser &
+jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root &
 
 # 🌐 WebUI 실행
 echo "🌐 WebUI를 포트 7860에서 실행합니다..."
